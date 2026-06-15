@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'apps.blog',
+      "apps.switch", 
     'apps.business_enterprise',
     'apps.contact',
     'apps.products',
