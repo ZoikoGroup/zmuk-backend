@@ -82,6 +82,7 @@ INSTALLED_APPS = [
     # 'apps.senior_discount',
     'apps.orders',
     'apps.newsletter',
+     'apps.news',
     'apps.jobs',
     'apps.search',
     'apps.travel_ecosystem_partner',

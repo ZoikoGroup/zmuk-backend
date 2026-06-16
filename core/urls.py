@@ -22,7 +22,6 @@ urlpatterns = [
     # path("api/marine-discount/",include("apps.marine_discount.urls")),
     # path("api/senior-discount/", include("apps.senior_discount.urls")),
     
-    
     path("api/",include("apps.travelpartners.urls")),
     path("api/v2/order/", include("apps.orders.urls")),
     path("api/v1/", include("apps.orders.urls")),
@@ -30,7 +29,7 @@ urlpatterns = [
 path("api/", include("apps.contact.urls")),
     path("api/v1/", include("apps.coupons.api_urls")),
     path("api/", include("apps.switch.urls")),
-   
+   path("api/", include("apps.news.urls")),
     path('api/newsletter/', include('apps.newsletter.urls')),
     path('jobs/', include('apps.jobs.urls')),
     path('careers/', include('apps.careers.urls')),
