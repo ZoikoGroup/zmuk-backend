@@ -273,3 +273,4 @@ EMAIL_HOST_USER = 'info@driverxmobile.com'
 EMAIL_HOST_PASSWORD = 'NoxxMC26070%!LGM'
 DEFAULT_FROM_EMAIL = 'Zoiko Group <info@driverxmobile.com>'
 TEST_RECEIVER_EMAIL = "04debasish03@gmail.com"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
