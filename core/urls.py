@@ -38,7 +38,8 @@ path("api/", include("apps.contact.urls")),
     
     path("api/", include("apps.enterprise.urls")),
     path('api/', include('apps.integrations.urls')),
-    
+    path("api/security/", include("apps.security.urls")),
+   path("api/support/", include("apps.support.urls")),
     
 
 
