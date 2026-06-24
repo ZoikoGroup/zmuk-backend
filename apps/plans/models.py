@@ -67,11 +67,35 @@ class Plan(models.Model):
     )
 
     price_24 = models.DecimalField(
-    max_digits=8,
-    decimal_places=2,
-    blank=True,
-    null=True
-)
+        max_digits=8,
+        decimal_places=2,
+        blank=True,
+        null=True,
+    )
+    price_12 = models.DecimalField(   # 12 Month Plan price
+        max_digits=8,
+        decimal_places=2,
+        blank=True,
+        null=True,
+    )
+    price_30 = models.DecimalField(   # 30 Day Plan price
+        max_digits=8,
+        decimal_places=2,
+        blank=True,
+        null=True,
+    )
+
+    # Card display fields
+    data_allowance = models.CharField(  # e.g. "30GB", "100GB", "UNLIMITED"
+        max_length=50,
+        blank=True,
+        null=True,
+    )
+    tier_label = models.CharField(      # e.g. "ESSENTIAL", "PROFESSIONAL", "ENTERPRISE"
+        max_length=50,
+        blank=True,
+        null=True,
+    )
 
     duration_days = models.PositiveIntegerField()
 

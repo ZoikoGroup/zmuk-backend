@@ -39,6 +39,8 @@ class PlanAdmin(admin.ModelAdmin):
                         "name",
                         "bqPlanID",      # ✅ added below name
                         "slug",
+                        "data_allowance",
+                        "tier_label",
                         "short_description",
                         "description",
                     )
@@ -48,6 +50,8 @@ class PlanAdmin(admin.ModelAdmin):
                         "price",
                         "sale_price",
                         "price_24",
+                        "price_12",
+                        "price_30",
                         "duration_days",
                     )
                 }),

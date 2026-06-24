@@ -32,6 +32,10 @@ class PlanSerializer(serializers.ModelSerializer):
             "price",
             "sale_price",
             "price_24",
+            "price_12",
+            "price_30",
+            "data_allowance",
+            "tier_label",
             "final_price",
             "duration_days",
 
