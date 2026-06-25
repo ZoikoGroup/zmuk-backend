@@ -17,14 +17,14 @@ class PlanFeatureInline(admin.TabularInline):
 class PlanAdmin(admin.ModelAdmin):
     list_display = (
         "name",
-        "bqPlanID",      # ✅ show in listing
+        "transatelID",      # ✅ show in listing
         "category",
         "final_price",
         "is_active",
     )
 
     list_filter = ("category", "is_active")
-    search_fields = ("name", "bqPlanID", "short_description")
+    search_fields = ("name", "transatelID", "short_description")
 
     autocomplete_fields = ("category",)
     prepopulated_fields = {"slug": ("name",)}
@@ -37,7 +37,7 @@ class PlanAdmin(admin.ModelAdmin):
                     "fields": (
                         "category",
                         "name",
-                        "bqPlanID",      # ✅ added below name
+                        "transatelID",      # ✅ added below name
                         "slug",
                         "data_allowance",
                         "tier_label",

@@ -26,7 +26,6 @@ class PlanCategory(models.Model):
 
 
 class Plan(models.Model):
-    
 
     category = models.ForeignKey(
         PlanCategory,
@@ -38,32 +37,24 @@ class Plan(models.Model):
 
     name = models.CharField(max_length=150)
 
-    bqPlanID = models.CharField(          # ✅ NEW FIELD
+    transatelID = models.CharField(
         max_length=100,
-        unique=True,
-        blank=True,
-        null=True
-    )
     
+        blank=True,
+        null=True,
+    )
+
     slug = models.SlugField(unique=True, blank=True)
 
-    short_description = models.TextField(
-        blank=True,
-        null=True
-    )
-    description = models.TextField(
-        blank=True,
-        null=True
-    )
+    short_description = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
 
     price = models.DecimalField(max_digits=8, decimal_places=2)
     sale_price = models.DecimalField(
         max_digits=8,
         decimal_places=2,
         blank=True,
-
-        
-        null=True
+        null=True,
     )
 
     price_24 = models.DecimalField(
