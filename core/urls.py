@@ -1,11 +1,13 @@
+import os
+
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.http import HttpResponse
 from django.conf import settings
-from django.conf.urls.static import static
+from django.views.static import serve
 
 def home(request):
-    return HttpResponse("DriverX Django API is running")
+    return HttpResponse("ZoikomobileUK Django API is running")
 
 urlpatterns = [
     path('', home),
@@ -24,8 +26,6 @@ urlpatterns = [
     # path("api/senior-discount/", include("apps.senior_discount.urls")),
     
     path("api/",include("apps.travelpartners.urls")),
-    path("api/v2/order/", include("apps.orders.urls")),
-    path("api/v1/", include("apps.orders.urls")),
     path("api/",include("apps.activation.urls")),
 path("api/", include("apps.contact.urls")),
     path("api/v1/", include("apps.coupons.api_urls")),
@@ -36,7 +36,8 @@ path("api/", include("apps.contact.urls")),
     path('careers/', include('apps.careers.urls')),
     path('search/', include('apps.search.urls')),
     path('api/travel-ecosystem-partner/', include('apps.travel_ecosystem_partner.urls')),
-    path("api/sim/", include("apps.sim_orders.urls")),
+    path("api/v1/sim_orders/", include("apps.sim_orders.urls")),
+    path("api/v1/sims/", include("apps.sims.urls")),  # sim-orders/ (reserve+activate via Transatel), sims/availability/, sims/reserve/, sims/release/
     path("api/", include("apps.enterprise.urls")),
     path('api/', include('apps.integrations.urls')),
     path("api/security/", include("apps.security.urls")),
@@ -50,5 +51,14 @@ path("api/", include("apps.contact.urls")),
     # path('api/form/', include('apps.demo_api.urls')),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+USE_S3 = os.getenv("USE_S3", "False") == "True"
+
+if not USE_S3:
+    urlpatterns += [
+        re_path(
+            r"^media/(?P<path>.*)$",
+            serve,
+            {"document_root": settings.MEDIA_ROOT},
+        ),
+    ]

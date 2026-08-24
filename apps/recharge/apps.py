@@ -4,4 +4,4 @@ from django.apps import AppConfig
 class RechargeConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "apps.recharge"
-    verbose_name = "Recharge & Top Up"
+    verbose_name = "Recharge"

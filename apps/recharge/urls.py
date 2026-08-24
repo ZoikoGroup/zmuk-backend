@@ -1,17 +1,14 @@
 from django.urls import path
 
-from .views import (
-    RechargeModulesView,
-    RechargeStatsView,
-    RechargeOrdersView,
-    CreateRechargeView,
-    stripe_webhook,
-)
+from . import views
+
+app_name = "recharge"
 
 urlpatterns = [
-    path("modules/", RechargeModulesView.as_view(), name="recharge_modules"),
-    path("stats/", RechargeStatsView.as_view(), name="recharge_stats"),
-    path("orders/", RechargeOrdersView.as_view(), name="recharge_orders"),
-    path("create/", CreateRechargeView.as_view(), name="recharge_create"),
-    path("webhook/", stripe_webhook, name="recharge_webhook"),
+    path("plans/", views.RechargePlanListAPI.as_view(), name="plans"),
+    path("sim-check/", views.SimCheckAPI.as_view(), name="sim-check"),
+    path("checkout/", views.RechargeCheckoutAPI.as_view(), name="checkout"),
+    path("stripe-webhook/", views.stripe_webhook, name="stripe-webhook"),
+    path("transactions/", views.MyRechargeTransactionsAPI.as_view(), name="transactions"),
+    path("transactions/<str:reference>/", views.RechargeTransactionDetailAPI.as_view(), name="transaction-detail"),
 ]
