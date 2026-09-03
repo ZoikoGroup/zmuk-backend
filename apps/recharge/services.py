@@ -1,7 +1,6 @@
 """Stripe integration for recharge payments.
 
-Uses Stripe Checkout (Stripe hosts the card page -> keeps us at PCI SAQ A and
-handles UK Strong Customer Authentication / 3-D Secure automatically).
+Uses Stripe Checkout (hosted card page → PCI SAQ A, automatic SCA/3DS).
 Amounts are integers in pence. The webhook is the source of truth for 'paid'.
 """
 import stripe
@@ -23,18 +22,21 @@ def _init():
 
 
 def create_checkout_session(order, success_url: str, cancel_url: str):
-    """Create a Stripe Checkout Session for a RechargeOrder. Returns the session."""
+    """Create a Stripe Checkout Session for a RechargeOrder."""
     _init()
+
+    product_name = f"{order.get_module_display()} — {order.msisdn}"
+    if order.product:
+        product_name = f"{order.product.name} — {order.msisdn}"
+
     session = stripe.checkout.Session.create(
         mode="payment",
         line_items=[
             {
                 "price_data": {
                     "currency": order.currency,
-                    "unit_amount": order.amount_pence,  # pence
-                    "product_data": {
-                        "name": f"{order.get_module_display()} — {order.msisdn}",
-                    },
+                    "unit_amount": order.amount_pence,
+                    "product_data": {"name": product_name},
                 },
                 "quantity": 1,
             }
@@ -43,17 +45,17 @@ def create_checkout_session(order, success_url: str, cancel_url: str):
             "order_ref": order.order_ref,
             "module": order.module,
             "msisdn": order.msisdn,
+            "sim_serial": order.sim_serial or "",
         },
         success_url=f"{success_url}?ref={order.order_ref}",
         cancel_url=f"{cancel_url}?ref={order.order_ref}",
-        # Idempotency: retrying the same order never creates a second session/charge.
         idempotency_key=f"recharge-checkout-{order.order_ref}",
     )
     return session
 
 
 def construct_webhook_event(payload: bytes, sig_header: str):
-    """Verify the webhook signature and return the Stripe event (raises on tamper)."""
+    """Verify webhook signature and return the Stripe event."""
     secret = getattr(settings, "STRIPE_WEBHOOK_SECRET", "") or ""
     if not secret:
         raise StripeNotConfigured("STRIPE_WEBHOOK_SECRET is not set.")
