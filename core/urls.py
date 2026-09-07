@@ -24,10 +24,7 @@ urlpatterns = [
     # path("api/military-discount/", include('apps.military_discount.urls')),
     # path("api/marine-discount/",include("apps.marine_discount.urls")),
     # path("api/senior-discount/", include("apps.senior_discount.urls")),
-    path(
-    "api/recharge/",
-    include("apps.recharge.urls", namespace="recharge")
-),
+  
     path("api/",include("apps.travelpartners.urls")),
     path("api/",include("apps.activation.urls")),
 path("api/", include("apps.contact.urls")),
