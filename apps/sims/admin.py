@@ -242,8 +242,15 @@ class OrderAdmin(admin.ModelAdmin):
                     iccid, f" (status: {qr_status})" if qr_status else "",
                 ))
 
-        return mark_safe(
-            '<div style="display:flex;flex-wrap:wrap;gap:4px">' + "".join(panels) + "</div>"
+        # Each entry in `panels` was already built with format_html(), so its
+        # contents are escaped. We only need to join them and drop them into
+        # the wrapping div — using format_html() here (instead of raw string
+        # concatenation + mark_safe()) means nothing bypasses escaping if
+        # this method is ever changed to include unescaped values later.
+        joined_panels = mark_safe("".join(panels))
+        return format_html(
+            '<div style="display:flex;flex-wrap:wrap;gap:4px">{}</div>',
+            joined_panels,
         )
 
     def has_add_permission(self, request):

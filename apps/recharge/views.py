@@ -239,11 +239,11 @@ class CreateRechargeView(APIView):
                 status=status.HTTP_502_BAD_GATEWAY,
             )
 
-        order.stripe_session_id = session.get("id", "")
+        order.stripe_session_id = session.id
         order.save(update_fields=["stripe_session_id"])
 
         return Response(
-            {"order_ref": order.order_ref, "checkout_url": session.get("url")},
+            {"order_ref": order.order_ref, "checkout_url": session.url},
             status=status.HTTP_201_CREATED,
         )
 
@@ -266,7 +266,8 @@ def stripe_webhook(request):
     try:
         event = services.construct_webhook_event(payload, sig_header)
     except services.StripeNotConfigured as exc:
-        return HttpResponse(str(exc), status=503)
+        logger.error("Stripe webhook rejected: not configured (%s)", exc)
+        return HttpResponse("Service unavailable", status=503)
     except ValueError:
         return HttpResponse("Invalid payload", status=400)
     except Exception:
@@ -277,13 +278,13 @@ def stripe_webhook(request):
 
     if etype == "checkout.session.completed":
         session = event["data"]["object"]
-        ref = (session.get("metadata") or {}).get("order_ref")
+        ref = (session.metadata or {}).get("order_ref")
         order = RechargeOrder.objects.filter(order_ref=ref).first()
 
         if order and order.status == RechargeOrder.STATUS_PENDING:
             # Mark as processing (paid but reactivation pending)
             order.status = RechargeOrder.STATUS_PROCESSING
-            order.stripe_payment_intent_id = session.get("payment_intent", "") or ""
+            order.stripe_payment_intent_id = session.payment_intent or ""
             order.paid_at = timezone.now()
             order.save(update_fields=["status", "stripe_payment_intent_id", "paid_at", "updated_at"])
 

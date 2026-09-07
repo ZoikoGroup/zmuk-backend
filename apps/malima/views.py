@@ -29,16 +29,20 @@ from typing import Any
 
 from django.db import transaction
 from django.utils import timezone
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
 
 from .models import MalimaOrder, MalimaOrderLine, SimInventory, SimReservation
 from .serializers import (
     AllocateSimsRequestSerializer,
     MalimaOrderCreateSerializer,
 )
+from apps.accounts.serializers import ChangePasswordSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -395,6 +399,12 @@ class ChangePasswordAPI(APIView):
         serializer.is_valid(raise_exception=True)
 
         user = request.user
+
+        try:
+            validate_password(serializer.validated_data["password"], user=user)
+        except ValidationError as e:
+            return Response({"error": list(e.messages)}, status=400)
+
         user.set_password(serializer.validated_data["password"])
         user.save()
 
