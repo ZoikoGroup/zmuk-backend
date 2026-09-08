@@ -19,3 +19,6 @@ static/
 .idea/
 .DS_Store
 Thumbs.db
+.env.bak
+.env.bak.*
+*.bak
