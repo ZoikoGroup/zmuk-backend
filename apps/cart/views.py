@@ -2,9 +2,14 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
+
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 from .models import CartLine
 from .services import get_or_create_cart
+from apps.accounts.serializers import ChangePasswordSerializer
 
 
 def _serialize(cart):
@@ -60,6 +65,12 @@ class ChangePasswordAPI(APIView):
         serializer.is_valid(raise_exception=True)
 
         user = request.user
+
+        try:
+            validate_password(serializer.validated_data["password"], user=user)
+        except ValidationError as e:
+            return Response({"error": list(e.messages)}, status=400)
+
         user.set_password(serializer.validated_data["password"])
         user.save()
 

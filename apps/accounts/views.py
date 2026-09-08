@@ -5,6 +5,8 @@ from rest_framework.authtoken.models import Token
 
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.sites.shortcuts import get_current_site
@@ -211,6 +213,14 @@ class ResetPasswordAPI(APIView):
             return Response({"error": "Invalid link"}, status=400)
 
         if default_token_generator.check_token(user, token):
+            # Explicit check (with user=) so the similarity/attribute
+            # validators can compare against this user, not just the
+            # generic rules the serializer field validator already runs.
+            try:
+                validate_password(serializer.validated_data["password"], user=user)
+            except ValidationError as e:
+                return Response({"error": list(e.messages)}, status=400)
+
             user.set_password(serializer.validated_data["password"])
             user.save()
             return Response({"message": "Password reset successful"})
@@ -314,6 +324,15 @@ class ChangePasswordAPI(APIView):
         serializer.is_valid(raise_exception=True)
 
         user = request.user
+
+        # Explicit check (with user=) so the similarity/attribute
+        # validators can compare against this user, not just the
+        # generic rules the serializer field validator already runs.
+        try:
+            validate_password(serializer.validated_data["password"], user=user)
+        except ValidationError as e:
+            return Response({"error": list(e.messages)}, status=400)
+
         user.set_password(serializer.validated_data["password"])
         user.save()
 

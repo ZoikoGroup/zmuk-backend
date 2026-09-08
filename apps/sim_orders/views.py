@@ -1,3 +1,5 @@
+import logging
+
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -14,6 +16,8 @@ from .serializers import (
 )
 from . import services
 from .emails import send_activation_code_email
+
+logger = logging.getLogger("apps.sim_orders")
 
 
 class SimProductsView(APIView):
@@ -95,7 +99,8 @@ def stripe_webhook(request):
     try:
         event = services.construct_webhook_event(payload, sig_header)
     except services.StripeNotConfigured as exc:
-        return HttpResponse(str(exc), status=503)
+        logger.error("Stripe webhook rejected: not configured (%s)", exc)
+        return HttpResponse("Service unavailable", status=503)
     except ValueError:
         return HttpResponse("Invalid payload", status=400)
     except Exception:
