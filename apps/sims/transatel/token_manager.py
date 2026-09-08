@@ -106,7 +106,7 @@ class TokenManager:
                 timeout=self.config.request_timeout,
             )
         except requests.RequestException as exc:
-            logger.error("Token generation request failed: %s", exc)  # nosemgrep: logger-credential-leak -- TODO(security): confirm exc never includes response body
+            logger.error("Token generation request failed: %s", exc)  # nosemgrep: python-logger-credential-disclosure -- TODO(security): confirm exc never includes response body
             raise TransatelAuthError(f"Token request failed: {exc}") from exc
 
         if resp.status_code != 200:
@@ -114,7 +114,7 @@ class TokenManager:
                 detail = resp.json().get("error_description") or resp.text
             except ValueError:
                 detail = resp.text
-            logger.error("Token generation failed (%s): %s", resp.status_code, detail)  # nosemgrep: logger-credential-leak -- TODO(security): confirm error detail from Transatel never includes sensitive data
+            logger.error("Token generation failed (%s): %s", resp.status_code, detail)  # nosemgrep: python-logger-credential-disclosure -- TODO(security): confirm error detail from Transatel never includes sensitive data
             raise TransatelAuthError(
                 f"Token generation failed with status {resp.status_code}: {detail}"
             )
@@ -142,7 +142,7 @@ class TokenManager:
         ttl = max(expires_in - self.config.token_refresh_buffer, 1)
         _cache_set(_CACHE_KEY, token_data, ttl)
 
-        logger.info("Transatel token generated, expires in %ss", expires_in)  # nosemgrep: logger-credential-leak -- false positive, only logs duration
+        logger.info("Transatel token generated, expires in %ss", expires_in)  # nosemgrep: python-logger-credential-disclosure -- false positive, only logs duration
         return access_token
 
     def _is_valid(self, token_data: dict) -> bool:
