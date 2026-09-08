@@ -84,7 +84,7 @@ class SimOrdersView(APIView):
         return Response(SimOrderSerializer(orders, many=True).data)
 
 
-@csrf_exempt
+@csrf_exempt  # nosemgrep: no-csrf-exempt -- Stripe webhook, verified via signature in construct_webhook_event(), not CSRF token
 def stripe_webhook(request):
     """POST /api/sim/webhook/  -> Stripe calls this. On payment success we issue
     the ZM###### activation code and email it (the Django version of the WP

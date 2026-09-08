@@ -90,7 +90,7 @@ class TransatelClient:
 
             if not response.ok:
                 # Never log the response body here — it can echo credentials.
-                logger.error("Transatel token request failed with HTTP %s", response.status_code)
+                logger.error("Transatel token request failed with HTTP %s", response.status_code)  # nosemgrep: logger-credential-leak -- false positive, only logs status code
                 raise TransatelError("Failed to obtain Transatel token.", response.status_code)
 
             data = response.json()
