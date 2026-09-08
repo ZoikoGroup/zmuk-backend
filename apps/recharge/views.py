@@ -250,7 +250,7 @@ class CreateRechargeView(APIView):
 
 # ── Stripe Webhook ───────────────────────────────────────────────────────
 
-@csrf_exempt
+@csrf_exempt  # nosemgrep: no-csrf-exempt -- Stripe webhook, verified via signature in construct_webhook_event(), not CSRF token
 def stripe_webhook(request):
     """POST /api/recharge/webhook/
 

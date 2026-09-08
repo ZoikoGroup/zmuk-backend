@@ -247,7 +247,7 @@ class OrderAdmin(admin.ModelAdmin):
         # the wrapping div — using format_html() here (instead of raw string
         # concatenation + mark_safe()) means nothing bypasses escaping if
         # this method is ever changed to include unescaped values later.
-        joined_panels = mark_safe("".join(panels))
+        joined_panels = mark_safe("".join(panels))  # nosemgrep: avoid-mark-safe -- panels pre-escaped via format_html(), mark_safe only needed to avoid double-escaping the join
         return format_html(
             '<div style="display:flex;flex-wrap:wrap;gap:4px">{}</div>',
             joined_panels,
